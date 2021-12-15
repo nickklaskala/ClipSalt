@@ -3,22 +3,28 @@ x=pc.paste().splitlines()
 xi=sorted([i.lower() for i in x])
 
 
-dupes=[]+[x[0]]
+dupes=[]
 for i in range(1,len(xi)):
 	if xi[i]==xi[i-1]:
 		dupes.append(xi[i])
 dupes=list(set(dupes))
 
 
-d=[]
-di=[]
+dct={}
 for i in dupes:
-	if i.lower() not in di:# and xi.count(i.lower())>1:
-		d.append(('       '+str(xi.count(i.lower())))[-7:]+'	'+i)
-		di.append(i.lower())
-d.sort(reverse=True)
-pad=d[0][:6].count(' ')
-d=['--'+i[pad:] for i in d if '      1' not in i]
-pc.copy('\n'.join(d))
+	dct[i]=xi.count(i)
 
+sorted_tuples = sorted(dct.items(), key=lambda item: item[1] ,reverse=True)
+sorted_dct = {k: v for k, v in sorted_tuples}
+
+d=[]
+pad=max([len(str(v)) for k,v in dct.items()])
+for item,count in dct.items():
+	d.append('-- '+(pad-len(str(count)))*' '+f'{count}  {item}')
+
+
+print(d)
+
+
+pc.copy('\n'.join(d))
 
