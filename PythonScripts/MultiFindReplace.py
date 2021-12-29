@@ -1,3 +1,74 @@
+
+
+print('File Path:')
+filePath=input().lower().replace('"','')
+# filePath=r'C:\Users\nick.klaskala\Downloads\New folder'
+
+print('Mapping Delimiter(Type "help" for more info):')
+delimiter=input()
+	while delimter.lower().strip()=='help'
+		print('')
+		delimiter=input()
+# delimiter=''
+
+print('Mapping:')
+quotechar=input()
+# quotechar=''
+
+print('Destination Table (schema.table):')
+dest=input().lower()
+# dest=''filePath=r'C:\Users\nick.klaskala\Downloads\ALTER_STORE_PROC.sql'
+
+
+
+
+
+text=open(filePath).read()
+delimiter=','
+
+#mapping=(old,new)
+mapping="""
+QUOTED_IDENTIFIER,qwsqwe1
+PROCEDURE,qwsqwe2
+EXTERNAL_ID,qwsqwe3
+CASE_TYPE_ID,qwsqwe4
+EnrollmentStartDate,qwsqwe5
+priseDB.dbo.ENROL,qwsqwe6
+"""
+if delimiter==None:
+	delimiter=','
+
+mapping=[m.split(delimiter) for m in mapping.strip().splitlines()]
+
+import re
+def regexReplace(old, new, str):
+	return re.sub(re.escape(old), new, str, flags=re.IGNORECASE)
+
+
+
+for pair in mapping:
+	if pair[0].lower() in text.lower():
+		print('found '+str(text.count(pair[0]))+' instances of text:'+pair[0])
+	text=regexReplace(pair[0],pair[1],text)
+
+file=open(filePath,'w+')
+file.write(text)
+file.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import os
 import pyperclip
 import csv
@@ -21,7 +92,7 @@ class dataGrid:
 		
 		for i in range(len(self.grid)):
 			if len(self.grid[i])!=len(self.grid[0]):
-				print('\n\n{1} UNEQUAL NUMBER OF COLUMNS ON LINE {0} IN FILE  PLEASE CORRECT AND RE-RUN {1}\n'.format(i,'*'*50))
+				print('\n\n{1} UNEQUAL NUMBER OF COLUMNS ON LINE {0} PLEASE CORRECT AND RE-RUN {1}\n\n'.format(i,'*'*50))
 
 
 	def getDelimiter(self,text):
@@ -116,7 +187,6 @@ else:
 		for file in files:
 			dest='#'+os.path.basename(path+'\\'+file).split('.')[0]
 			text=open(path+'\\'+file).read()
-			print('Reading '+file+'...\n')
 			a=dataGrid(text,delimiter,quotechar)
 			sql+=a.formatSQL()
 			sql2+='\nselect * from '+dest
