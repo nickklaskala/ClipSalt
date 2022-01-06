@@ -33,12 +33,13 @@ class dataGrid:
 
 	def getMaxColumnWidth(self,grid):
 		maxColWidth=[]
-		for i in range(len(grid[0])):
+		
+		for x in range(len(grid[0])):
 			maxlen=0
-			for r in range(len(grid)):
+			for y in range(len(grid)):
 				try:
-					if len(grid[r][i])>maxlen:
-						maxlen=len(grid[r][i])
+					if len(grid[y][x])>maxlen:
+						maxlen=len(grid[y][x])
 				except:
 					pass
 			maxColWidth.append(maxlen)

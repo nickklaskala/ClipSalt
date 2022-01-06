@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 import pyperclip
 import csv
@@ -55,25 +56,24 @@ class dataGrid:
 
 		headers=self.grid[0]
 		table=[["'"+f.replace("'","''")+"'" if f!='' else 'NULL' for f in row] for row in a.grid[1:] ]
-		sql = ''
-
+		table=[',('+','.join(row)+')\n' for row in table]
 
 		sql='--drop table if exists '+dest+'\ngo\n\ncreate table '+dest+'\n(\n\trow_id int identity(1,1),\n'
 
 		for i in range(len(headers)):
 			sql+='\t'+'['+headers[i]+']'+' nvarchar('+str(self.maxColWidth[i])+'),\n'
+		sql+='\n)\n'
+		insert='\n\ngo\n\ninsert into '+dest+' ('+','.join(['['+i+']' for i in headers])+')\nvaluesxfillerx'
 
-		sql+=')\ngo\n\n'
+		if len(table)>1000:
+			tableInsertLocs=[1000*i-1 for i in range(1,int(len(table)/1000)+1)]
+			while tableInsertLocs:
+				loc=tableInsertLocs.pop()
+				table.insert(loc,insert)
+		table.insert(0,insert)
 
-		for i in range(0,len(table)):
-			if i%1000==0:
-				sql+='\ninsert into '+dest+' ('+','.join(['['+i+']' for i in headers])+')\nvalues '
-
-			values=table[i]
-			if i%1000!=0:
-				sql+=','
-
-			sql+='('+    ','.join(values)    +')\n'
+		sql+=''.join(table)
+		sql=sql.replace('valuesxfillerx,','values ').replace('valuesxfillerx','values')
 
 		return sql
 
@@ -82,7 +82,7 @@ class dataGrid:
 
 print('Delimited File Path:')
 filePath=input().lower().replace('"','')
-# filePath=r'C:\Users\nick.klaskala\Downloads\New folder'
+#filePath=r'C:\Users\nick.klaskala\Downloads\'
 
 print('Delimiter:')
 delimiter=input()
@@ -96,17 +96,16 @@ print('Destination Table (schema.table):')
 dest=input().lower()
 # dest=''
 
-singleFile=None
 sql=''
 sql2='\n'
 #Default Variable
+
+
 if dest==None or dest=='':
 	dest=os.path.basename(filePath)
-	if '.' in(dest):
-		singleFile=True
 	dest='#'+dest.split('.')[0]
 
-if singleFile:
+if Path(filePath).is_file():
 	text=open(filePath).read()
 	a=dataGrid(text,delimiter,quotechar)
 	sql+=a.formatSQL()
@@ -127,6 +126,7 @@ else:
 print('Paste Query into SSMS')
 print('hit enter to close')
 pyperclip.copy(sql+sql2)
+# print(sql+sql2)
 print('end')
 input()
 
