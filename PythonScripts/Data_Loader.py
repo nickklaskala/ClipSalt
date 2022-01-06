@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 import pyperclip
 import csv
@@ -82,31 +83,30 @@ class dataGrid:
 
 print('Delimited File Path:')
 filePath=input().lower().replace('"','')
-# filePath=r'C:\Users\nick.klaskala\Downloads\New folder'
+#filePath=r'C:\Users\nick.klaskala\Downloads\lundbeck mock files\TrialCard_Lundbeck_Vyepti_HubSOA_20211228110648.txt'
 
 print('Delimiter:')
 delimiter=input()
-# delimiter=''
+#delimiter=''
 
 print('Quotechar:')
 quotechar=input()
-# quotechar=''
+#quotechar=''
 
 print('Destination Table (schema.table):')
 dest=input().lower()
-# dest=''
+#dest=''
 
-singleFile=None
 sql=''
 sql2='\n'
 #Default Variable
+
+
 if dest==None or dest=='':
 	dest=os.path.basename(filePath)
-	if '.' in(dest):
-		singleFile=True
 	dest='#'+dest.split('.')[0]
 
-if singleFile:
+if Path(filePath).is_file():
 	text=open(filePath).read()
 	a=dataGrid(text,delimiter,quotechar)
 	sql+=a.formatSQL()
