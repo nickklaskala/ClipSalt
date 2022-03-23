@@ -106,7 +106,7 @@ if dest==None or dest=='':
 	dest='#'+dest.split('.')[0]
 
 if Path(filePath).is_file():
-	text=open(filePath).read()
+	text=open(filePath,encoding='utf8').read()
 	a=dataGrid(text,delimiter,quotechar)
 	sql+=a.formatSQL()
 	sql2+='\nselect * from '+dest
@@ -114,7 +114,7 @@ else:
 	for path, folders, files in os.walk(filePath):
 		for file in files:
 			dest='#'+os.path.basename(path+'\\'+file).split('.')[0]
-			text=open(path+'\\'+file).read()
+			text=open(path+'\\'+file,encoding='utf8').read()
 			print('Reading '+file+'...\n')
 			a=dataGrid(text,delimiter,quotechar)
 			sql+=a.formatSQL()
